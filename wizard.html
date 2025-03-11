@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="RotorHazard">
+	<meta name="google" content="notranslate">
+	<title>DDR Overlays Wizard</title>
+	
+	<!-- Icons -->
+	<meta name="msapplication-TileColor" content="#ee7a28">
+	<meta name="theme-color" content="#224873">
+	
+	<!-- Scripts -->
+	<script type="text/javascript" src="overlays/assets/rh/jquery-3.6.4/jquery-3.6.4.min.js"></script>
+	<script type="text/javascript" src="overlays/assets/js/masonry.pkgd.min.js"></script>
+	<script type="text/javascript" src="overlays/assets/js/jscolor.js"></script>
+
+		
+	<!-- CSS -->	
+	<link rel="stylesheet" href="overlays/assets/fonts/teko/stylesheet.css"></link>
+	<link rel="stylesheet" href="overlays/assets/fonts/inconsolata/stylesheet.css"></link>
+	<link rel="stylesheet" href="overlays/assets/css/wizard.css"></link>
+	
+</head>
+
+<body>
+	
+<div id="float_save_button">
+	<button id="saveButton">
+		<img src="overlays/assets/imgs/icons/save.png" class="social"> 
+	</button>
+</div>
+
+<div id="topbar">
+	<div id="logo"><img src="overlays/assets/imgs/ddr_logo_white.png" class="logo"></div>
+	<span class="title">DDR Overlays Wizard</span>
+	<div id="socials">
+		<a href="#" class="social"><img src="overlays/assets/imgs/icons/github.png" class="social"></a>
+		<a href="#" class="social"><img src="overlays/assets/imgs/icons/discord.png" class="social"></a>
+		<a href="#" class="social"><img src="overlays/assets/imgs/icons/facebook.png" class="social"></a>
+		<a href="#" class="social"><img src="overlays/assets/imgs/icons/instagram.png" class="social"></a>
+	</div>
+</div>
+
+<div class="grid" data-masonry='{ "itemSelector": ".grid-item" }'>
+
+	<div class="grid-item">
+		<div class="card">
+			<div class="card-header">⚙️ General Settings</div>
+
+			<div class="card-body">
+
+				<div class="input_field">
+					<label for="socket_address">Socket Address</label>
+					<input type="url" id="socket_address" name="socket_address" placeholder="Socket Address" value="localhost:3000" onchange="renderPageUrls()">
+					<span class="description">The address of the socket repeater</span>
+				</div>
+		
+
+			</div>
+			
+		</div>
+	</div>
+
+	<div class="grid-item">
+		<div class="card">
+			<div class="card-header">Race Status Bar</div>
+
+			<div class="card-body">
+				
+				<div class="input_field">
+					<label for="topbar_title">Event Title</label>
+					<input type="text" id="topbar_title" name="topbar_title" placeholder="Title" onchange="renderPageUrls()">
+					<span class="description">The event title (optional)</span>
+				</div>
+
+				<div class="input_field_checkbox">
+					<label for="topbar_logo">Show Logo</label>
+					<input type="checkbox" id="topbar_logo" name="topbar_logo" onclick="renderPageUrls()">
+					<span class="description">Show the DDR Logo</span>
+				</div>
+
+			</div>
+
+			<div class="url_bar">
+				<label for="url_topbar">Stream URL</label>
+				<div class="url_bar_inner">
+					<input type="url" id="url_topbar" name="url_topbar" placeholder="URL" disabled>
+					<button title="Visit" onclick="urlOpenWindow('url_topbar')"><img src="overlays/assets/imgs/icons/eye.png"></button>
+					<button title="Copy" onclick="urlCopyToClipboard('url_topbar')"><img src="overlays/assets/imgs/icons/copy.png"></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="grid-item">
+		<div class="card">
+			<div class="card-header">Node Overlay</div>
+			<div class="card-body">
+				<div class="input_field">
+					<label for="node_id">Node Number</label>
+					<select id="node_id" name="node_id" onchange="renderPageUrls()">
+						<option value="1">Node 1</option>
+						<option value="2">Node 2</option>
+						<option value="3">Node 3</option>
+						<option value="4">Node 4</option>
+						<option value="5">Node 5</option>
+						<option value="6">Node 6</option>
+						<option value="7">Node 7</option>
+						<option value="8">Node 8</option>
+					</select>
+					<span class="description">The active Node number</span>
+				</div>
+			</div>
+			<div class="url_bar">
+				<label for="url_node">Stream URL</label>
+				<div class="url_bar_inner">
+					<input type="url" id="url_node" name="url_node" placeholder="URL" disabled>
+					<button title="Visit" onclick="urlOpenWindow('url_node')"><img src="overlays/assets/imgs/icons/eye.png"></button>
+					<button title="Copy" onclick="urlCopyToClipboard('url_node')"><img src="overlays/assets/imgs/icons/copy.png"></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="grid-item">
+		<div class="card">
+			<div class="card-header">Next Up</div>
+			<div class="card-body">
+		
+				<div class="input_field">
+					<label for="nextup_title">Next Up Title</label>
+					<input type="text" id="nextup_title" name="nextup_title" value="Next Up" onchange="renderPageUrls()">
+					<span class="description">The 'Next Up' text</span>
+				</div>
+
+				<div class="input_field_checkbox">
+					<label for="nextup_title_show">Show Title</label>
+					<input type="checkbox" id="nextup_title_show" name="nextup_title_show" onclick="renderPageUrls()">
+					<span class="description">Show the 'Next Up' title</span>
+				</div>
+
+				<div class="input_field_checkbox">
+					<label for="nextup_heatname">Show Heat Name</label>
+					<input type="checkbox" id="nextup_heatname" name="nextup_heatname" onclick="renderPageUrls()">
+					<span class="description">Show the name of the heat</span>
+				</div>
+
+				<div class="input_field">
+					<label for="nextup_bgcolor">Background Color</label>
+					<input data-jscolor="{}" id="nextup_bgcolor" name="nextup_bgcolor" onchange="renderPageUrls()">
+					<span class="description">The background color of the block, defaults to #000000DC</span>
+				</div>
+
+
+			</div>
+
+			<div class="url_bar">
+				<label for="url_nextup">Stream URL</label>
+				<div class="url_bar_inner">
+					<input type="url" id="url_nextup" name="url_nextup" placeholder="URL" disabled>
+					<button title="Visit" onclick="urlOpenWindow('url_nextup')"><img src="overlays/assets/imgs/icons/eye.png"></button>
+					<button title="Copy" onclick="urlCopyToClipboard('url_nextup')"><img src="overlays/assets/imgs/icons/copy.png"></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="grid-item">
+		<div class="card">
+			<div class="card-header">Leaderboard</div>
+			<div class="card-body">
+
+				<div class="input_field">
+					<label for="leaderboard_quantity">Quantity of Pilots</label>
+					<select id="leaderboard_quantity" name="leaderboard_quantity" onchange="renderPageUrls()">
+						<option value="8">Top 8</option>
+						<option value="16">Top 16</option>
+						<option value="32">Top 32</option>
+					</select>
+					<span class="description">The quantity of pilots shown</span>
+				</div>
+		
+				<div class="input_field_checkbox">
+					<label for="leaderboard_title_show">Show Title</label>
+					<input type="checkbox" id="leaderboard_title_show" name="leaderboard_title_show" onclick="renderPageUrls()">
+					<span class="description">Show leaderboard title</span>
+				</div>
+
+				<div class="input_field_checkbox">
+					<label for="leaderboard_avatar_show">Show Avatars</label>
+					<input type="checkbox" id="leaderboard_avatar_show" name="leaderboard_avatar_show" onclick="renderPageUrls()">
+					<span class="description">Show pilot avatar in the list</span>
+				</div>
+
+				<div class="input_field_checkbox">
+					<label for="leaderboard_flag_show">Show Country Flag</label>
+					<input type="checkbox" id="leaderboard_flag_show" name="leaderboard_flag_show" onclick="renderPageUrls()">
+					<span class="description">Show pilots country flag in the list</span>
+				</div>
+
+				<div class="input_field_checkbox">
+					<label for="leaderboard_pilotcolor_show">Show Pilot Color</label>
+					<input type="checkbox" id="leaderboard_pilotcolor_show" name="leaderboard_pilotcolor_show" onclick="renderPageUrls()">
+					<span class="description">Show a line with the pilot color</span>
+				</div>
+
+
+				<div class="input_field">
+					<label for="leaderboard_pilotcolor">Line Color</label>
+					<input data-jscolor="{}" id="leaderboard_pilotcolor" name="leaderboard_pilotcolor" onchange="renderPageUrls()">
+					<span class="description">The color of the line, defaults to #006cff, only used if Pilot Color is disabled</span>
+				</div>
+
+
+			</div>
+
+			<div class="url_bar">
+				<label for="url_leaderboard">Stream URL</label>
+				<div class="url_bar_inner">
+					<input type="url" id="url_leaderboard" name="url_leaderboard" placeholder="URL" disabled>
+					<button title="Visit" onclick="urlOpenWindow('url_leaderboard')"><img src="overlays/assets/imgs/icons/eye.png"></button>
+					<button title="Copy" onclick="urlCopyToClipboard('url_leaderboard')"><img src="overlays/assets/imgs/icons/copy.png"></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+</div>
+
+<script>
+
+	let baseUrl = window.location.href.split('/').slice(0, -1).join('/');
+
+
+	document.addEventListener("DOMContentLoaded", function() {
+		// Probeer de opgeslagen configuratie te laden
+		let savedConfig = localStorage.getItem("config");
+
+		if (savedConfig) {
+			let config = JSON.parse(savedConfig);
+
+			// Vul de velden in met de opgeslagen waardes
+			document.getElementById('socket_address').value = config.socket_address || '';
+
+			document.getElementById('topbar_title').value = config.topbar_title || '';
+			document.getElementById('topbar_logo').checked = config.topbar_logo || false;
+
+			document.getElementById('nextup_title').value = config.nextup_title || 'Next Up';
+			document.getElementById('nextup_title_show').checked = config.nextup_title_show || false;
+			document.getElementById('nextup_heatname').checked = config.nextup_heatname || false;
+			let nextup_bgcolor_input = config.nextup_bgcolor || '#000000DC';
+			document.querySelector('#nextup_bgcolor').jscolor.fromString(nextup_bgcolor_input);
+
+			document.getElementById('leaderboard_quantity').value = config.leaderboard_quantity || '8';
+			document.getElementById('leaderboard_avatar_show').checked = config.leaderboard_avatar_show || false;
+			document.getElementById('leaderboard_flag_show').checked = config.leaderboard_flag_show || false;
+			document.getElementById('leaderboard_pilotcolor_show').checked = config.leaderboard_pilotcolor_show || false;
+			document.getElementById('leaderboard_title_show').checked = config.leaderboard_title_show || false;
+			let leaderboard_pilotcolor_input = config.leaderboard_pilotcolor || '#006cff';
+			document.querySelector('#leaderboard_pilotcolor').jscolor.fromString(leaderboard_pilotcolor_input);
+
+		}
+
+		renderPageUrls();
+	});
+
+
+	document.getElementById('saveButton').addEventListener('click', function() {
+		let config = {
+			socket_address: document.getElementById('socket_address').value,
+			topbar_title: document.getElementById('topbar_title').value,
+			topbar_logo: document.getElementById('topbar_logo').checked,
+			nextup_title_show: document.getElementById('nextup_title_show').checked,
+			nextup_heatname: document.getElementById('nextup_heatname').checked,
+			nextup_title: document.getElementById('nextup_title').value,
+			nextup_bgcolor: document.getElementById('nextup_bgcolor').value,
+			leaderboard_quantity: document.getElementById('leaderboard_quantity').value,
+			leaderboard_avatar_show: document.getElementById('leaderboard_avatar_show').checked,
+			leaderboard_flag_show: document.getElementById('leaderboard_flag_show').checked,
+			leaderboard_pilotcolor_show: document.getElementById('leaderboard_pilotcolor_show').checked,
+			leaderboard_title_show: document.getElementById('leaderboard_title_show').checked,
+			leaderboard_pilotcolor: document.getElementById('leaderboard_pilotcolor').value
+		};
+		localStorage.setItem("config", JSON.stringify(config));
+		alert("Configuration Saved!");
+	});
+
+
+	jscolor.presets.default = {
+		format:'hexa'
+	};
+</script>
+<script type="text/javascript" src="overlays/assets/js/wizard.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="RotorHazard">
+	<meta name="google" content="notranslate">
+	<title>Leaderboard</title>
+	
+	<!-- Icons -->
+	<meta name="msapplication-TileColor" content="#ee7a28">
+	<meta name="theme-color" content="#224873">
+	
+	<!-- Scripts -->
+	<script type="text/javascript" src="assets/rh/jquery-3.6.4/jquery-3.6.4.min.js"></script>
+	<script type="text/javascript" src="assets/rh/socket.io-4.6.1/socket.io.min.js"></script>
+	<script type="text/javascript" src="assets/js/ddr_overlays.js"></script>
+	
+	<script>
+		let host = '';
+		let socketAddress = getQueryParam('socket');
+		let enableAvatar = getQueryParam('avatar');
+		
+		if(socketAddress){
+			host = socketAddress ? socketAddress : document.domain + ':' + location.port;
+		}else {
+			host = 'localhost:3000';
+		}
+		const class_id = getQueryParam('class_id');
+
+		let leaderboard_quantity = getQueryParam('leaderboard_quantity');
+		let leaderboard_avatar_show = getQueryParam('leaderboard_avatar_show');
+		let leaderboard_flag_show = getQueryParam('leaderboard_flag_show');
+		let leaderboard_pilotcolor_show = getQueryParam('leaderboard_pilotcolor_show');
+		let leaderboard_pilotcolor = getQueryParam('leaderboard_pilotcolor');
+		let leaderboard_title_show = getQueryParam('leaderboard_title_show');
+
+	</script>
+	
+	<script type="text/javascript" src="assets/rh/rotorhazard.js"></script>
+	
+	<!-- CSS -->	
+	<link rel="stylesheet" href="assets/fonts/teko/stylesheet.css"></link>
+	<link rel="stylesheet" href="assets/fonts/inconsolata/stylesheet.css"></link>
+	<link rel="stylesheet" href="assets/css/ddr_overlays.css"></link>
+	
+</head>
+
+<body>
+
+	<script type="text/javascript" charset="utf-8">
+		var data_dependencies = [
+			'result_data',
+			'pilot_data',
+			'current_heat'
+		];
+	
+		rotorhazard.show_messages = false;
+		var result_data;
+		var streamclass = class_id;
+		var ddr_pilots;
+
+
+	
+			
+		$(document).ready(function () {
+
+			if(leaderboard_avatar_show == 'false'){
+				$('#ddr_leaderboard').addClass('no_avatar');
+			}
+			if(leaderboard_flag_show == 'false'){
+				$('#ddr_leaderboard').addClass('no_flag');
+			}
+			
+
+			if(leaderboard_title_show == 'true'){
+				$('.leaderboard_title').show();
+			}else{
+				$('.leaderboard_title').hide();
+			}
+
+			if (class_id == null) {
+				socket.emit('load_data', {'load_types': [
+					'current_heat',
+					'result_data',
+					'pilot_data'
+				]});
+			}
+	
+			socket.on('language', function (msg) {
+				if (msg.language) {
+					rotorhazard.interface_language = msg.language;
+				}
+			});
+	
+			socket.on('current_heat', function (msg) {
+				if (!class_id) {
+					if (msg.heat_class) {
+						streamclass = msg.heat_class;
+						if (result_data != undefined) {
+							display_result_data(result_data);
+						}
+					} else {
+						display_nothing()
+					}
+				}
+			});
+
+			            /* Pilots */
+			socket.on('pilot_data', function (msg) {
+                rotorhazard.event.pilot_attributes = msg.attributes;
+                rotorhazard.event.pilots = msg.pilots;
+                rotorhazard.options.pilotSort = msg.pilotSort;
+                ddr_pilots = msg.pilots;
+                load_pilots(rotorhazard);
+		    });
+
+	
+			function display_nothing() {
+				$('#class_name').html('No Data');
+				//$('#leaderboard').html('<p>' + __('There is no saved race data available to view.') + '</p>');
+			}
+	
+			function display_result_data(msg) {
+				if (!$.isEmptyObject(msg.heats)) {
+					for (var class_id in msg.heats_by_class) {
+						if (class_id == streamclass) {
+							var current_class = msg.classes[class_id];
+							if (current_class) {
+								if (current_class.name) {
+									class_name = current_class.name;
+								} else {
+									class_name = 'Class' + ' ' + current_class.id;
+								}
+								$('#class_name').html(class_name)
+	
+								if (current_class.ranking) {
+									build_leaderboard_ddr(leaderboard_pilotcolor_show, leaderboard_pilotcolor, current_class.ranking, 'by_race_time', undefined);
+
+								} else if (current_class.leaderboard[current_class.leaderboard.meta.primary_leaderboard].length) {
+				
+									build_leaderboard_ddr(leaderboard_pilotcolor_show, leaderboard_pilotcolor, current_class.leaderboard[current_class.leaderboard.meta.primary_leaderboard], current_class.leaderboard.meta.primary_leaderboard, msg.meta);
+
+
+								} else {
+									display_nothing()
+								}
+							}
+						}
+					}
+				} else {
+					display_nothing()
+				}
+			}
+	
+			socket.on('result_data', function (msg) {
+				result_data = msg;
+				display_result_data(result_data);
+			});
+		});
+	
+	</script>
+
+	
+	<div class="page-title leaderboard_title">
+		Leaderboard <span id="class_name"></span>
+	</div>
+	
+	<main class="leaderboard_fs" id="ddr_leaderboard">
+	
+
+
+	</main>
+	
+
+
+	
+
+
+</body>
+
+</html>
