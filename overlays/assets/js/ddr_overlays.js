@@ -257,6 +257,9 @@ async function build_leaderboard_pilot_card(pilot, display_type, meta, display_s
 	let pilot_color = getPilotColor(pilot.pilot_id, ddr_pilots);
 	let pilot_html = '';
 
+	let total_label = (meta.start_behavior == 2) ? __('Laps Total') : __('Total');
+
+
 	if(leaderboard_pilotcolor_show == 'false'){
 		pilot_html += '<div class="pilot_card" style="border-color: #' + leaderboard_pilotcolor + ';">';
 
@@ -278,6 +281,23 @@ async function build_leaderboard_pilot_card(pilot, display_type, meta, display_s
     pilot_html += '<div class="pilot_card_avatar"><img src="' + finalImg + '"></div>';
     pilot_html += '<div class="pilot_card_flag"><img class="country_flag" src="./assets/imgs/flags/' + getPilotFlag(pilot.pilot_id, ddr_pilots) + '.jpg"></div>';
     pilot_html += '<div class="pilot_card_pilot">' + pilot.callsign + '</div>';
+
+	pilot_html += '<div class="pilot_card_data">';
+	if (display_starts) {
+		pilot_html += '<div class="pilot_card_data_item">'+pilot.starts+'</div>';
+	}
+
+	if (["by_race_time", "heat", "round", "current"].includes(display_type)) {
+		//pilot_html += '<div class="pilot_card_data">'+pilot.laps+'</div>';
+		pilot_html += '<div class="pilot_card_data_item">'+pilot.consecutives_base+'/'+pilot.consecutives+'</div>';
+		//pilot_html += '<div class="pilot_card_data">'+pilot.avg+'</div>';
+
+	}
+	
+    pilot_html += '</div>';
+
+
+
     pilot_html += '</div>';
 
     return pilot_html;

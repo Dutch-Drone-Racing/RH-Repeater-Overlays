@@ -138,12 +138,8 @@
 	
 								if (current_class.ranking) {
 									build_leaderboard_ddr(leaderboard_pilotcolor_show, leaderboard_pilotcolor, current_class.ranking, 'by_race_time', undefined);
-
 								} else if (current_class.leaderboard[current_class.leaderboard.meta.primary_leaderboard].length) {
-				
 									build_leaderboard_ddr(leaderboard_pilotcolor_show, leaderboard_pilotcolor, current_class.leaderboard[current_class.leaderboard.meta.primary_leaderboard], current_class.leaderboard.meta.primary_leaderboard, msg.meta);
-
-
 								} else {
 									display_nothing()
 								}
