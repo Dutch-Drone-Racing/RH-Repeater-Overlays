@@ -257,6 +257,8 @@ async function build_leaderboard_pilot_card(pilot, display_type, meta, display_s
 	let pilot_color = getPilotColor(pilot.pilot_id, ddr_pilots);
 	let pilot_html = '';
 
+	console.log(meta);
+
 	let total_label = (meta.start_behavior == 2) ? __('Laps Total') : __('Total');
 
 
@@ -292,8 +294,19 @@ async function build_leaderboard_pilot_card(pilot, display_type, meta, display_s
 		pilot_html += '<div class="pilot_card_data_item">'+pilot.consecutives_base+'/'+pilot.consecutives+'</div>';
 		//pilot_html += '<div class="pilot_card_data">'+pilot.avg+'</div>';
 
+		
 	}
+
+	let pilot_starts = 0;
+	if(pilot.consecutives_base != null){
+		pilot_starts = pilot.consecutives_base;
+	}
+
+	pilot_html += '<div class="pilot_card_data_item" style="width: 100px;">'+pilot_starts+'/'+pilot.consecutives+ '</div>';
 	
+	pilot_html += '<div class="pilot_card_data_item" style="margin-right: 106px;">'+pilot.fastest_lap+ '</div>';
+
+
     pilot_html += '</div>';
 
 
