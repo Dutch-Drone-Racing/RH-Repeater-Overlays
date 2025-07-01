@@ -147,6 +147,38 @@ function show_current_laps() {
 	}
 }
 
+function show_current_laps_nec() {
+	if (current_laps && rotorhazard.event.race_status) {
+		var i = streamnode;
+		var node_index = current_laps.node_index[streamnode];
+
+		$('#pilot_current_laps tr').remove();
+		$('#pilot_current_lap_text').html('');
+
+		let display_laps = node_index.laps.slice(-5); // Alleen de laatste 5 laps
+
+		$.each(display_laps, function (j, lap) {
+			var tr = '';
+			tr = $('<tr>');
+			tr.append(
+				$('<td class="display_lap_number">').text(lap.lap_number + ":")
+			);
+			tr.append(
+				$('<td>').text(lap.lap_time)
+			);
+			tr.appendTo('#pilot_current_laps');
+		});
+
+		// Onderste balk: toon het nummer van de laatste lap (indien aanwezig)
+		if (display_laps.length > 0) {
+			let lastLap = display_laps[display_laps.length - 1];
+			$('#pilot_current_lap_text').html('Lap: ' + lastLap.lap_number);
+		} else {
+			$('#pilot_current_lap_text').html('STARTING');
+		}
+	}
+}
+
 function build_ddr_nextup(leaderboard, display_type, meta, display_starts=false) {
 	if (typeof(display_type) === 'undefined')
 		display_type = 'by_race_time';
@@ -463,4 +495,325 @@ function render_pilots(rotorhazard) {
 
 	//pilotlist.innerHTML = pilotlist_html_2;
 	
+}
+
+
+
+
+
+async function build_leaderboard_ddr_top3(leaderboard_pilotcolor_show, leaderboard_pilotcolor, leaderboard, display_type, meta, display_starts = false, rotorhazard) {
+    if (typeof display_type === 'undefined') display_type = 'by_race_time';
+    if (typeof meta === 'undefined') {
+        meta = {
+            team_racing_mode: false,
+            start_behavior: 0,
+            consecutives_count: 0,
+            primary_leaderboard: null
+        };
+    }
+
+    let show_points = (display_type == 'round');
+    let total_label = (meta.start_behavior == 2) ? __('Laps Total') : __('Total');
+
+    // Beperk de leaderboard tot maximaal 16 items
+    let limited_leaderboard = leaderboard.slice(3, 24);
+
+	//limit leaderboard to 3 items
+	let limited_leaderboard_top3 = leaderboard.slice(0, 3);
+
+	build_leaderboard_top3_podium(limited_leaderboard_top3, display_type, meta, display_starts, rotorhazard);
+
+	console.log('leaderboard_pilotcolor_show: ' + leaderboard_pilotcolor_show);
+
+    // Maak HTML voor alle pilots
+    let pilot_html = await Promise.all(
+        limited_leaderboard.map(pilot => build_leaderboard_pilot_card(pilot, display_type, meta, display_starts, rotorhazard, leaderboard_pilotcolor_show, leaderboard_pilotcolor))
+    );
+
+    let html_output = "";
+
+    if (pilot_html.length <= 8) {
+        // Als er 8 of minder pilots zijn, plaats alles in één kolom
+        html_output = `<div class="leaderboard_column">${pilot_html.join("")}</div>`;
+    } else {
+        // Als er meer dan 8 zijn, splits het in twee kolommen
+        let first_column = pilot_html.slice(0, 11).join("");
+        let second_column = pilot_html.slice(11).join("");
+        html_output = `
+            <div class="leaderboard_column">${first_column}</div>
+            <div class="leaderboard_column">${second_column}</div>
+        `;
+    }
+
+
+
+    document.getElementById("leaderboard_top3_show_more").innerHTML = html_output;
+}
+
+function build_leaderboard_top3_podium(leaderboard) {
+	
+	document.getElementById("leaderboard_top3_third_callsign").innerHTML = leaderboard[2].callsign;
+	document.getElementById("leaderboard_top3_third_time").innerHTML = leaderboard[2].consecutives_base+'/'+leaderboard[2].consecutives;
+	document.getElementById("leaderboard_top3_third_flag").innerHTML = '<img src="./assets/imgs/flags/' + getPilotFlag(leaderboard[2].pilot_id, ddr_pilots) + '.jpg">';
+	document.getElementById("leaderboard_top3_third_avatar").innerHTML = '<img src="../avatars/4x2/' + leaderboard[2].callsign.replace(/ /g, "_").toLowerCase() + '.png">';
+
+	document.getElementById("leaderboard_top3_second_callsign").innerHTML = leaderboard[1].callsign;
+	document.getElementById("leaderboard_top3_second_time").innerHTML = leaderboard[1].consecutives_base+'/'+leaderboard[1].consecutives;
+	document.getElementById("leaderboard_top3_second_flag").innerHTML = '<img src="./assets/imgs/flags/' + getPilotFlag(leaderboard[1].pilot_id, ddr_pilots) + '.jpg">';
+	document.getElementById("leaderboard_top3_second_avatar").innerHTML = '<img src="../avatars/4x2/' + leaderboard[1].callsign.replace(/ /g, "_").toLowerCase() + '.png">';
+
+	document.getElementById("leaderboard_top3_first_callsign").innerHTML = leaderboard[0].callsign;
+	document.getElementById("leaderboard_top3_first_time").innerHTML = leaderboard[0].consecutives_base+'/'+leaderboard[0].consecutives;
+	document.getElementById("leaderboard_top3_first_flag").innerHTML = '<img src="./assets/imgs/flags/' + getPilotFlag(leaderboard[0].pilot_id, ddr_pilots) + '.jpg">';
+	document.getElementById("leaderboard_top3_first_avatar").innerHTML = '<img src="../avatars/4x2/' + leaderboard[0].callsign.replace(/ /g, "_").toLowerCase() + '.png">';
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* HTML generators for brackets */
+class BracketHeat {
+    constructor(number, type, column, advance_to) {
+        this.number = number;          /* heat number, starting from 1 */
+        this.type = type;              /* 'winner' or 'loser' */
+        this.column = column;          /* column index where the heat shall be rendered, starting from 0 */
+        this.advance_to = advance_to;  /* the next heat where the winners of this heat will race
+                                        * applicable only if the first and the second classified advance to the same heat */
+    }
+}
+
+const bracket_formats = {
+	"ddr8de": [
+			new BracketHeat(1,  "preliminary", 	0, 6),
+			new BracketHeat(2,  "preliminary", 	0, 6),
+			new BracketHeat(3,  "loser", 		0, 8),
+			new BracketHeat(4,  "winner", 		1, 8),
+			new BracketHeat(5,  "loser",       	1, 9),
+			new BracketHeat(6,  "winner",      	2, 11),
+	  ],
+    "multigp16": [
+                   new BracketHeat(1,  "preliminary", 0, 6),
+                   new BracketHeat(2,  "preliminary", 0, 6),
+                   new BracketHeat(3,  "preliminary", 0, 8),
+                   new BracketHeat(4,  "preliminary", 0, 8),
+                   new BracketHeat(5,  "loser",       0, 9),
+                   new BracketHeat(6,  "winner",      1, 11),
+                   new BracketHeat(7,  "loser",       0, 10),
+                   new BracketHeat(8,  "winner",      1, 11),
+                   new BracketHeat(9,  "loser",       1, 12),
+                   new BracketHeat(10, "loser",       1, 12),
+                   new BracketHeat(11, "winner",      2, 14),
+                   new BracketHeat(12, "loser",       2, 13),
+                   new BracketHeat(13, "loser",       3, 14),
+                   new BracketHeat(14, "winner",      3),
+                 ],
+    "fai16de":   [  
+					new BracketHeat(1,  "preliminary", 0, 6),
+					new BracketHeat(2,  "preliminary", 0, 6),
+					new BracketHeat(3,  "preliminary", 0, 8),
+					new BracketHeat(4,  "preliminary", 0, 8),
+					new BracketHeat(5,  "loser",       0, 9),
+					new BracketHeat(6,  "loser",      0, 11),
+					new BracketHeat(7,  "winner",       1, 10),
+					new BracketHeat(8,  "winner",      1, 11),
+					new BracketHeat(9,  "loser",       1, 12),
+					new BracketHeat(10, "loser",       1, 12),
+					new BracketHeat(11, "loser",      2, 14),
+					new BracketHeat(12, "winner",       2, 13),
+					new BracketHeat(13, "loser",       3, 14),
+					new BracketHeat(14, "winner",      3),
+				],
+    //"fai32":     [],
+    "fai32de":   [
+					new BracketHeat(1,  "winner", 0),
+					new BracketHeat(2,  "winner", 0),
+					new BracketHeat(3,  "winner", 0),
+					new BracketHeat(4,  "winner", 0),
+					new BracketHeat(5,  "winner", 1),
+					new BracketHeat(6,  "winner", 1),
+					new BracketHeat(7,  "winner", 1),
+					new BracketHeat(8,  "winner", 1),
+					new BracketHeat(9,  "winner", 2),
+					new BracketHeat(10, "winner", 2),
+					new BracketHeat(11, "winner", 2),
+					new BracketHeat(12, "winner", 2),
+					new BracketHeat(13, "loser",  0),
+					new BracketHeat(14, "loser",  0),
+					new BracketHeat(15, "loser",  0),
+					new BracketHeat(16, "loser",  0),
+					new BracketHeat(17, "loser",  1),
+					new BracketHeat(18, "loser",  1),
+					new BracketHeat(19, "loser",  1),
+					new BracketHeat(20, "loser",  1),
+					new BracketHeat(21, "loser",  2),
+					new BracketHeat(22, "loser",  2),
+					new BracketHeat(23, "winner", 3),
+					new BracketHeat(24, "winner", 3),
+					new BracketHeat(25, "loser",  3),
+					new BracketHeat(26, "loser",  3),
+					new BracketHeat(27, "loser",  4),
+					new BracketHeat(28, "winner", 4),
+					new BracketHeat(29, "loser",  5),
+					new BracketHeat(30, "winner", 5),
+                 ]
+}
+
+function build_elimination_brackets(race_bracket_type, race_class_id, ddr_pilot_data, ddr_heat_data, ddr_class_data, ddr_race_data) {
+
+    // clear brackets
+    $('#winner_bracket_content').html('');
+    $('#loser_bracket_content').html('');
+
+    var elimination_heats = [];
+
+    Object.values(ddr_heat_data).forEach(heat => {
+        if (heat.class_id == race_class_id) {
+            elimination_heats.push(heat);
+        }
+    });
+
+    // loop through heats and build brackets
+    console.log('There are ' + elimination_heats.length + ' heats');
+
+    for (let i = 0; i < elimination_heats.length; i++) {
+        const heat = elimination_heats[i];
+        let html = '<div class="bracket_race">';
+        html += '<div class="bracket_race_title">' + heat.displayname + '</div>';
+        html += '<div class="bracket_race_pilots">';
+
+        const filtered_slots = heat.slots.filter(slot => /*slot.seed_id*/true && slot.seed_rank);
+
+        for (let j = 0; j < filtered_slots.length; j++) {
+            const slot = filtered_slots[j];
+            let pilot;
+
+            if (slot.pilot_id === 0) {
+                // try to get the pilot from completed heats
+                if (slot.method == 1) {
+                    // heat
+                    if (
+                        ddr_race_data &&
+                        ddr_race_data.heats &&
+                        ddr_race_data.heats[slot.seed_id] &&
+                        ddr_race_data.heats[slot.seed_id].leaderboard &&
+                        ddr_race_data.heats[slot.seed_id].leaderboard.meta &&
+                        ddr_race_data.heats[slot.seed_id].leaderboard.meta.primary_leaderboard
+                    ) {
+                        const leaderboard_type = ddr_race_data.heats[slot.seed_id].leaderboard.meta.primary_leaderboard;
+                        pilot = ddr_race_data.heats[slot.seed_id].leaderboard[leaderboard_type]?.find(p => p.position === slot.seed_rank);
+                    } else {
+                        pilot = undefined;
+                    }
+                }
+            } else {
+                // pilot available
+                pilot = ddr_pilot_data.find(p => p.pilot_id === slot.pilot_id);
+            }
+
+            if (pilot) {
+                let flagImg = getFlagURL(pilot.pilot_id, ddr_pilot_data);
+                let pilotImg = getPilotImgURL(pilot);
+
+                html += '<div class="bracket_race_pilot">';
+
+                html += '<div class="avatar"><img src="' + pilotImg + '"></div>';
+                html += '<div class="flag"><img src="' + flagImg + '" alt="USA"></div>';
+                html += '<div class="pilot_name">' + pilot.callsign + '</div>';
+
+                html += '</div>';
+            } else {
+                let method_text = get_method_descriptor(ddr_pilot_data, ddr_heat_data, ddr_class_data, slot.method, slot.seed_id, slot.seed_rank, slot.pilot_id)
+                html += '<div class="bracket_race_pilot">';
+                html += '<div class="no_pilot">' + method_text + '</div>';
+                html += '</div>';
+            }
+        }
+
+        html += '</div>';
+        html += '</div>';
+
+        if (bracket_formats[race_bracket_type] != undefined) {
+            let bracket_heat_info = bracket_formats[race_bracket_type][i];
+
+            if (bracket_heat_info.type == "winner" || bracket_heat_info.type == "preliminary") {
+                var column_counter = bracket_heat_info.column; 
+                if ($('#bracket_column_' + column_counter).length == 0) {
+                    $('#winner_bracket_content').append('<div id="bracket_column_'+column_counter+'" class="bracket_column"></div>');
+                }
+                $('#bracket_column_'+column_counter).append( html );
+            } else {
+                var column_counter = bracket_heat_info.column + 1;
+                if ($('#bracket_column_loser_' + column_counter).length == 0) {
+                    $('#loser_bracket_content').append('<div id="bracket_column_loser_'+column_counter+'" class="bracket_column"></div>');
+                }
+                $('#bracket_column_loser_'+column_counter).append( html );
+            }
+        }
+    }
+}
+
+function get_method_descriptor(ddr_pilot_data, ddr_heat_data, ddr_class_data, method, seed, rank, pilot_id) {
+    if (method == 0) { // pilot
+        var pilot = ddr_pilot_data?.find(obj => {return obj.pilot_id == pilot_id});
+
+        if (pilot) {
+            return pilot.callsign;
+        } else {
+            return false;
+        }
+    } else if (method == 1) { // heat
+        var heat = ddr_heat_data?.find(obj => {return obj.id == seed});
+
+        if (heat) {
+            return heat.displayname + " " + __('Rank') + " " + rank;
+        } else {
+            return false;
+        }
+    } else if (method == 2) { // class
+        var race_class = ddr_class_data?.find(obj => {return obj.id == seed});
+
+        if (race_class) {
+            return race_class.displayname + " " + __('Rank') + " " + rank;
+        } else {
+            return false;
+        }
+    }
+    return false;
+}
+
+
+
+/* utility functions */
+function setsAreEqual(set1, set2) {
+    if (set1.size !== set2.size) return false;
+    return [...set1].every(item => set2.has(item));
+}
+
+
+
+
+/* Pilot data retrieval */
+function getFlagURL(pilot_id, ddr_pilot_data) {
+    let flagImg = './assets/imgs/flags/' + getPilotFlag(pilot_id, ddr_pilot_data) + '.jpg';
+    if (!imageExists(flagImg)) {
+        // flagImg = './assets/imgs/no_flag.jpg';
+    }
+    return flagImg;
+}
+
+function getPilotImgURL(pilot) {
+    let pilotImg = '/avatars/' + pilot.callsign.replace(/ /g,"_").toLowerCase() + '.jpg';
+    if (!imageExists(pilotImg)) {
+        pilotImg = './assets/imgs/no_avatar.png';
+    }
+    return pilotImg;
 }

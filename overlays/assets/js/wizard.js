@@ -19,7 +19,11 @@ function renderPageUrls() {
 	lb_pilot_color = lb_pilot_color.replace(/^#/, '');
 	document.getElementById('url_leaderboard').value = baseUrl + '/overlays/leaderboard.html?socket=' + document.getElementById('socket_address').value + '&leaderboard_quantity=' + document.getElementById('leaderboard_quantity').value + '&leaderboard_avatar_show=' + document.getElementById('leaderboard_avatar_show').checked + '&leaderboard_flag_show=' + document.getElementById('leaderboard_flag_show').checked + '&leaderboard_pilotcolor_show=' + document.getElementById('leaderboard_pilotcolor_show').checked + '&leaderboard_pilotcolor=' + lb_pilot_color + '&leaderboard_title_show=' + document.getElementById('leaderboard_title_show').checked;
 
+	//Leaderboard Top 3
+	document.getElementById('url_leaderboard_top3').value = baseUrl + '/overlays/leaderboard_top3.html?socket=' + document.getElementById('socket_address').value + '&leaderboard_quantity=' + document.getElementById('leaderboard_quantity').value + '&leaderboard_avatar_show=' + document.getElementById('leaderboard_avatar_show').checked + '&leaderboard_flag_show=' + document.getElementById('leaderboard_flag_show').checked + '&leaderboard_pilotcolor_show=' + document.getElementById('leaderboard_pilotcolor_show').checked + '&leaderboard_pilotcolor=' + lb_pilot_color + '&leaderboard_title_show=' + document.getElementById('leaderboard_title_show').checked + '&leaderboard_top3_show_more=' + document.getElementById('leaderboard_top3_show_more').checked;
 
+	//Brackets
+	document.getElementById('url_brackets').value = baseUrl + '/overlays/brackets.html?socket=' + document.getElementById('socket_address').value + '&bracket_type=' + document.getElementById('brackets_type').value + '&class_id=' + document.getElementById('brackets_class_id').value;
 }
 
 

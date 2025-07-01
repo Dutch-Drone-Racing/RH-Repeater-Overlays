@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="RotorHazard">
+    <meta name="google" content="notranslate">
+    <title>Brackets</title>
+
+    <!-- Scripts -->
+	<script type="text/javascript" src="assets/rh/jquery-3.6.4/jquery-3.6.4.min.js"></script>
+	<script type="text/javascript" src="assets/rh/socket.io-4.6.1/socket.io.min.js"></script>
+	<script type="text/javascript" src="assets/js/ddr_overlays.js"></script>
+
+
+	<script>
+		let host = '';
+		let socketAddress = getQueryParam('socket');
+		if(socketAddress){
+			host = socketAddress ? socketAddress : document.domain + ':' + location.port;
+		}else {
+			host = 'localhost:3000';
+		}
+
+        var bracket_type = getQueryParam('bracket_type');
+        var class_id = getQueryParam('class_id');
+        var showTitle = getQueryParam('show_title');
+        
+
+	</script>
+
+    <script type="text/javascript" src="assets/rh/rotorhazard.js"></script>
+    	
+	<!-- CSS -->	
+	<link rel="stylesheet" href="assets/fonts/teko/stylesheet.css"></link>
+	<link rel="stylesheet" href="assets/fonts/inconsolata/stylesheet.css"></link>
+	<link rel="stylesheet" href="assets/css/ddr_overlays.css"></link>
+
+    <script>
+        if (bracket_type === 'fai16de' || bracket_type === 'multigp16') {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'assets/css/brackets_16.css';
+            document.head.appendChild(link);
+        }
+
+        if (bracket_type === 'ddr8de') {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'assets/css/brackets_8.css';
+            document.head.appendChild(link);
+        }
+
+        if (bracket_type === 'fai32de') {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'assets/css/brackets_32.css';
+            document.head.appendChild(link);
+        }
+    </script>
+
+
+
+</head>
+
+<body>
+    
+<script type="text/javascript" charset="utf-8">
+
+    var data_dependencies = [
+        'all_languages',
+        'result_data',
+        'pilot_data',
+        'class_data',
+        'heat_data',
+    ];
+
+   
+
+
+    var ddr_race_data;
+    var ddr_pilot_data;
+    var ddr_class_data;
+    var ddr_heat_data;
+
+    function race_kickoff(msg) {
+
+    }
+
+    $(document).ready(function () {
+
+        socket.emit('load_data', {'load_types': data_dependencies});
+
+        socket.on('result_data', function (msg) {
+            ddr_race_data = msg;
+        });
+
+        socket.on('pilot_data', function (msg) {
+            rotorhazard.event.pilot_attributes = msg.attributes;
+            rotorhazard.event.pilots = msg.pilots;
+            rotorhazard.options.pilotSort = msg.pilotSort;
+            ddr_pilot_data = msg.pilots;    
+        });
+
+        socket.on('class_data', function (msg) {
+            ddr_class_data = msg.classes;
+        });
+
+        socket.on('heat_data', function (msg) {
+            ddr_heat_data = msg.heats;
+            build_elimination_brackets(bracket_type, class_id, ddr_pilot_data, ddr_heat_data, ddr_class_data, ddr_race_data);
+
+        });
+
+        if(showTitle !== "true"){
+            document.getElementById("winner_bracket_title").style.display = "none";
+            document.getElementById("loser_bracket_title").style.display = "none";
+        }
+
+    });
+
+</script>
+
+<main class="page-stream">
+
+    <div id="fai_brackets">
+
+        <div id="brackets" class="brackets-viewer">
+
+            <div class="bracket_group">
+                <div class="bracket_group_title" id="winner_bracket_title">
+                    Winner Bracket
+                </div>
+
+                <div id="winner_bracket_content" class="bracket_group_content">
+
+                    <!--
+                    <div class="bracket_race">
+                        <div class="bracket_race_title">Race 1</div>
+                        <div class="bracket_race_pilots">
+
+                            <div class="bracket_race_pilot">
+                                <div class="avatar">
+                                    <img src="/ddr/static/assets/imgs/no_avatar.png">
+                                </div>
+
+                                <div class="flag">
+                                    <img src="/fpvscores/static/assets/imgs/flags/us.jpg" alt="USA">
+                                </div>
+
+                                <div class="pilot_name">
+                                    Pilot 1
+                                </div>
+                            </div>
+
+                            <div class="bracket_race_pilot">
+                                Pilot 2
+                            </div>
+                            <div class="bracket_race_pilot">
+                                Pilot 3
+                            </div>
+                            <div class="bracket_race_pilot">
+                                Pilot 4
+                            </div>
+
+                        </div>
+                    </div>
+                    -->
+
+                </div>
+
+            </div>
+
+            <div class="bracket_group">
+                <div class="bracket_group_title" id="loser_bracket_title">
+                    Lower Bracket
+                </div>
+
+                <div id="loser_bracket_content" class="bracket_group_content">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</main>
+
+<style>
+    body{
+        font-family: 'Teko', sans-serif;
+    }
+</style>
+
+</body>
+
+</html>

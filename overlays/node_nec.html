@@ -84,12 +84,12 @@
 
 			socket.on('current_laps', function (msg) {
 				current_laps = msg.current;
-				show_current_laps();
+				show_current_laps_nec();
 			});
 
 			socket.on('race_status', function (msg) {
 				rotorhazard.event.race_status = msg;
-				show_current_laps();
+				show_current_laps_nec();
 			});
 
 
@@ -236,10 +236,6 @@
 			<div id="node_flag"></div>
 			<div id="node_callsign"></div>
 			<div id="node_team_name"></div>
-
-			<div id="node_race_stats">
-				<div id="node_rank_stat"></div>
-			</div>
 
 			<div id="node_position_spacer"></div>
 

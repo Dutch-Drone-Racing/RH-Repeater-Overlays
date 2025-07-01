@@ -231,6 +231,69 @@
 	</div>
 
 
+	<div class="grid-item">
+		<div class="card">
+			<div class="card-header">Brackets (Eliminations)</div>
+			
+			<div class="card-body">
+
+				<div class="input_field">
+					<label for="brackets_class_id">Class ID</label>
+					<input type="text" id="brackets_class_id" name="brackets_class_id" value="0" onchange="renderPageUrls()">
+					<span class="description">The ID of the class of the brackets, starts at 0.</span>
+				</div>
+
+				<div class="input_field">
+					<label for="brackets_type">Bracket Type:</label>
+					<select id="brackets_type" name="brackets_type" onchange="renderPageUrls()">
+						<option value="ddr8de">DDR 8 Pilots Double-Eliminations</option>
+						<option value="multigp16">MultiGP 16</option>
+						<option value="fai16de">FAI 16 Double-Eliminations</option>
+						<option value="fai32de">FAI 32 Double-Eliminations</option>
+					</select>
+					<span class="description">The type of brackets</span>
+				</div>
+
+			</div>
+
+			<div class="url_bar">
+				<label for="url_leaderboard">Stream URL</label>
+				<div class="url_bar_inner">
+					<input type="url" id="url_brackets" name="url_brackets" placeholder="URL" disabled>
+					<button title="Visit" onclick="urlOpenWindow('url_brackets')"><img src="overlays/assets/imgs/icons/eye.png"></button>
+					<button title="Copy" onclick="urlCopyToClipboard('url_brackets')"><img src="overlays/assets/imgs/icons/copy.png"></button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+	<div class="grid-item">
+		<div class="card">
+			<div class="card-header">Leaderboard with Top 3</div>
+			
+			<div class="card-body">
+
+				<div class="input_field_checkbox">
+					<label for="leaderboard_top3_show_more">Show top 24 pilots</label>
+					<input type="checkbox" id="leaderboard_top3_show_more" name="leaderboard_top3_show_more" onclick="renderPageUrls()">
+					<span class="description">Show more than only the top 3 pilots</span>
+				</div>
+
+			</div>
+
+			<div class="url_bar">
+				<label for="url_leaderboard">Stream URL</label>
+				<div class="url_bar_inner">
+					<input type="url" id="url_leaderboard_top3" name="url_leaderboard_top3" placeholder="URL" disabled>
+					<button title="Visit" onclick="urlOpenWindow('url_leaderboard_top3')"><img src="overlays/assets/imgs/icons/eye.png"></button>
+					<button title="Copy" onclick="urlCopyToClipboard('url_leaderboard_top3')"><img src="overlays/assets/imgs/icons/copy.png"></button>
+				</div>
+			</div>
+
+		</div>
+	</div>
 
 
 </div>
@@ -266,6 +329,11 @@
 			document.getElementById('leaderboard_title_show').checked = config.leaderboard_title_show || false;
 			let leaderboard_pilotcolor_input = config.leaderboard_pilotcolor || '#006cff';
 			document.querySelector('#leaderboard_pilotcolor').jscolor.fromString(leaderboard_pilotcolor_input);
+			
+			document.getElementById('leaderboard_top3_show_more').checked = config.leaderboard_top3_show_more || false;
+			
+			document.getElementById('brackets_class_id').value = config.brackets_class_id || '0';
+			document.getElementById('brackets_type').value = config.brackets_type || 'ddr8de';
 
 		}
 
@@ -287,7 +355,10 @@
 			leaderboard_flag_show: document.getElementById('leaderboard_flag_show').checked,
 			leaderboard_pilotcolor_show: document.getElementById('leaderboard_pilotcolor_show').checked,
 			leaderboard_title_show: document.getElementById('leaderboard_title_show').checked,
-			leaderboard_pilotcolor: document.getElementById('leaderboard_pilotcolor').value
+			leaderboard_pilotcolor: document.getElementById('leaderboard_pilotcolor').value,
+			leaderboard_top3_show_more: document.getElementById('leaderboard_top3_show_more').checked,
+			brackets_class_id: document.getElementById('brackets_class_id').value,
+			brackets_type: document.getElementById('brackets_type').value
 		};
 		localStorage.setItem("config", JSON.stringify(config));
 		alert("Configuration Saved!");

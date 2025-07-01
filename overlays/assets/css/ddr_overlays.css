@@ -93,9 +93,6 @@ body {
     line-height: 1;
 }
 
-#ddr_node #node_race_stats {
-
-}
 
 #ddr_node #node_position_spacer {
     width: 150px;
@@ -223,7 +220,6 @@ body {
 #ddr_frame_topbar #block_left, #ddr_frame_topbar #block_right {
     float: left;
     height: 76px;
-    #background-color: #b50808;
     width: 160px;
 }
 
@@ -435,7 +431,7 @@ body {
 }
 
 .pilot_card_avatar {
-    width: 50px;
+    width: 64px;
     height: 50px;
     border-radius: 50%;
     background-color: #b9b9b9;
@@ -490,3 +486,175 @@ body {
 
 /* END OF DDR LEADERBOARD */
 
+
+
+/* DDR LEADERBOARD TOP 3 */
+
+.leaderboard_top3_page {
+    font-family: teko, Arial, Helvetica, sans-serif;
+    line-height: 1;
+    justify-content: center;
+    display: flex;
+}
+.leaderboard_top3_page #leaderboard_top3 {
+    width: 40vw;
+    height: 100vh;
+    color: #fff;
+    float: left;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.leaderboard_top3_page #leaderboard_top3_show_more {
+    width: 60vw;
+    height: 100vh;
+    color: #fff;
+    float: left;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    padding-top: 160px;
+}
+
+.leaderboard_top3_podium {
+    width: 100%;
+    height: 60vh;
+    color: #fff;
+    float: left;
+    margin: 25vh 0;
+    padding: 0;
+}
+
+.top3_podium_item {
+    width: 33%;
+    height: 100%;
+    color: #fff;
+    float: left;
+    margin: 0;
+    padding: 0;
+    bottom: 0px;
+    text-align: center;
+}
+
+.top3_podium_item .top3_podium_item_info {
+    width: calc(100% - 12px);
+    background-color: #000000DC;
+    border: 6px solid #fff;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.top3_podium_item .top3_podium_item_avatar {
+    width: 100%;
+    height: 340px;
+    margin-bottom: 0px;
+}
+
+.top3_podium_item .top3_podium_item_avatar img {
+    width: 100%;
+    height: 100%;
+}
+
+#leaderboard_top3_first {
+    padding-top: 0px;
+}
+#leaderboard_top3_first .top3_podium_item_info {
+    background-color: #0002444b;
+    height: 340px;
+}
+#leaderboard_top3_first .top3_podium_item_pos {
+    margin-bottom: 80px;
+}
+
+
+#leaderboard_top3_second {
+    padding-top: 40px;
+}
+#leaderboard_top3_second .top3_podium_item_info {
+    background-color: #0002444b;
+    height: 300px;
+}
+#leaderboard_top3_second .top3_podium_item_pos {
+    margin-bottom: 40px;
+}
+
+
+#leaderboard_top3_third {
+    padding-top: 80px;
+}
+#leaderboard_top3_third .top3_podium_item_info {
+    background-color: #0002444b;
+    height: 260px;
+}
+#leaderboard_top3_third .top3_podium_item_pos {
+    margin-bottom: 0px;
+}
+
+.top3_podium_item .top3_podium_item_pos {
+    font-size: 100px;
+    font-weight: 800;
+    padding-top: 10px;
+}
+
+.top3_podium_item .top3_podium_item_pos sup {
+    font-size: 40px;
+}
+
+.top3_podium_item .top3_podium_item_flag {
+    width: 48px;
+    height: 32px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+
+.top3_podium_item .top3_podium_item_flag img {
+    width: 100%;
+    height: 100%;
+}
+
+.top3_podium_item .top3_podium_item_callsign {
+    font-size: 40px;
+    font-weight: 500;
+    padding-top: 10px;
+}
+
+.top3_podium_item .top3_podium_item_time {
+    font-size: 40px;
+    font-weight: 400;
+    padding-top: 10px;
+}
+
+
+
+
+.leaderboard_top3_show_more .leaderboard_column {
+    width: calc(50% - 24px);
+    float: left;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    padding: 12px;
+}
+
+.leaderboard_top3_show_more .pilot_card_avatar {
+    display: none;
+}
+
+.leaderboard_top3_show_more .pilot_card .pilot_card_data_item:last-child {
+    display: none;
+}
+
+.leaderboard_top3_show_more .pilot_card_data {
+    /*width: 120px;*/
+    /*overflow: hidden;*/
+    margin-right: 12px;;
+}
+
+
+
+/* END OF DDR LEADERBOARD TOP 3 */

@@ -179,7 +179,7 @@
 						// $('#laps').html(pilot_data.laps);
 						// $('#fastest_lap').html(pilot_data.fastest_lap);
 						
-						var pilotImgPath = '../avatars/' + pilot_data.callsign.replace(/ /g, "_").toLowerCase() + '.jpg';
+						var pilotImgPath = '../avatars/4x2/' + pilot_data.callsign.replace(/ /g, "_").toLowerCase() + '.png';
 						var defaultImgPath = 'assets/imgs/no_avatar.png';
 						
 						imageExists(pilotImgPath, function(exists) {
@@ -264,6 +264,21 @@
 		#node_info_bar {
 			border-bottom-color: var(--pilot_color)!important;
 		}
+		#node_avatar{
+			width: 140px!important;
+			height: 200px!important;
+			border-radius: 0!important;
+			background-color: transparent!important;
+			overflow: visible!important;
+		}
+		#node_avatar_img {
+			width: 140px!important;
+			height: 200px!important;
+			border-radius: 0!important;
+			object-fit: fill!important;
+		}
+
+
 	</style>
 
 </body>
